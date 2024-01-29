@@ -1,5 +1,12 @@
 {
 	"editor.defaultFormatter": "ms-python.autopep8",
 	"editor.formatOnSave": true,
-	"editor.formatOnPaste": true
+	"editor.formatOnPaste": true,
+	"[python]": {
+		"editor.defaultFormatter": "ms-python.autopep8",
+	},
+	"autopep8.args": [
+		"--max-line-length",
+		"90",
+	]
 }
