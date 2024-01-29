@@ -1,0 +1,9 @@
+services:
+  delivery-fee-calculator-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 80:80
+    volumes:
+      - .:/root/
