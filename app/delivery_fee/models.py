@@ -39,10 +39,12 @@ class OrderInfo(BaseModel):
             raise ValueError('number_of_items must be non-negative')
         return value
 
-    @field_validator('delivery_time', mode='plain')
+    @field_validator('delivery_time', mode='before')
     def delivery_time__parser(cls, value):
         try:
-            return datetime.fromisoformat(value)
+            if isinstance(value, str):
+                return datetime.fromisoformat(value)
+            raise ValueError
         except ValueError:
             raise ValueError(
                 'delivery_time must be in UTC ISO format (e.g. 2024-01-15T13:00:00Z)')
