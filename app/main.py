@@ -1,6 +1,7 @@
 from fastapi import FastAPI, APIRouter
 from fastapi.responses import RedirectResponse
 from app.delivery_fee.router import delivery_fee_router
+from http import HTTPStatus
 
 
 app = FastAPI()
@@ -20,4 +21,4 @@ app.include_router(api_root)
 # nothing to see on the root page
 @app.get("/")
 async def redirect_to_docs():
-    return RedirectResponse(url="/docs")
+    return RedirectResponse(url="/docs", status_code=HTTPStatus.PERMANENT_REDIRECT)
