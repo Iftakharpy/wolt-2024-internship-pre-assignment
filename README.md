@@ -10,6 +10,9 @@ To run project using docker, open the terminal in the project base directory, th
 docker compose up --build
 ```
 
+To see the docs of the api endpoints, open your browser and go to `http://localhost:80/docs`.
+
+
 To stop the project, press `Ctrl + C` in the terminal and then run the following command:
 
 ```bash
