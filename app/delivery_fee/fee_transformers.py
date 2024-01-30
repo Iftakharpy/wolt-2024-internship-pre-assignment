@@ -41,11 +41,11 @@ class ExcludeFeeTransformer(DeliveryFeeTransformer):
         transformed_delivery_fee = deepcopy(delivery_fee)
 
         exclusion_cart_value_threshold = 200e2  # 200€
-        exclude_delivery_fee_factor = 1  # 100% decrease
+        exclusion_delivery_fee_factor = 1  # 100% decrease
 
         if delivery_info.cart_value >= exclusion_cart_value_threshold:
             transformed_delivery_fee -= (transformed_delivery_fee *
-                                         exclude_delivery_fee_factor)
+                                         exclusion_delivery_fee_factor)
 
         return transformed_delivery_fee
 
