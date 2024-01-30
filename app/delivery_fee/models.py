@@ -1,5 +1,5 @@
-from typing import Annotated
-from pydantic import BaseModel
+from typing import Annotated, Self
+from pydantic import BaseModel, validator
 from datetime import datetime
 
 
@@ -21,9 +21,100 @@ class OrderInfo(BaseModel):
                              ("Order time in UTC in ISO format. "
                               "Example: 2024-01-15T13:00:00Z")]
 
+    @validator('cart_value')
+    def cart_value__must_be_non_negative(cls, value):
+        if value < 0:
+            raise ValueError('cart_value must be non-negative')
+        return value
+
+    @validator('delivery_distance')
+    def delivery_distance__must_be_non_negative(cls, value):
+        if value < 0:
+            raise ValueError('delivery_distance must be non-negative')
+        return value
+
+    @validator('number_of_items')
+    def number_of_items__must_be_non_negative(cls, value):
+        if value < 0:
+            raise ValueError('number_of_items must be non-negative')
+        return value
+
+    # @validator('delivery_time')
+    # def can_not_be_in_future(cls, value):
+    #     if value > datetime.now():
+    #         raise ValueError('delivery_time can not be in the future')
+    #     return value
+
 
 class DeliveryFee(BaseModel):
     # in cents (e.g. €1.00 = 100 = 1e2)
     delivery_fee: Annotated[int,
                             ("Calculated delivery fee in cents. "
                              "Example: 710 (710 cents = 7.10€)")]
+
+    @validator('delivery_fee')
+    def delivery_fee__must_be_non_negative(cls, value):
+        if value < 0:
+            raise ValueError('delivery_fee must be non-negative')
+        return value
+
+    def __add__(self, other: Self | int | float) -> Self:
+        if isinstance(other, (int, float)):
+            total_fee = max(self.delivery_fee + other, 0)
+        elif isinstance(other, DeliveryFee):
+            total_fee = max(self.delivery_fee + other.delivery_fee, 0)
+        else:
+            raise TypeError(
+                f"Unsupported operand type(s) for +: '{type(self)}' and '{type(other)}'")
+        return DeliveryFee(delivery_fee=total_fee)
+
+    def __mul__(self, other: int | float) -> Self:
+        if not isinstance(other, (int, float)):
+            raise TypeError(
+                f"Unsupported operand type(s) for *: '{type(self)}' and '{type(other)}'")
+        total_fee = max(self.delivery_fee * other, 0)
+        return DeliveryFee(delivery_fee=total_fee)
+
+    def __div__(self, other: int | float) -> Self:
+        if not isinstance(other, (int, float)):
+            raise TypeError(
+                f"Unsupported operand type(s) for /: '{type(self)}' and '{type(other)}'")
+        total_fee = max(self.delivery_fee / other, 0)
+        return DeliveryFee(delivery_fee=total_fee)
+
+    def __gt__(self, other: Self | int | float) -> bool:
+        if isinstance(other, (int, float)):
+            return self.delivery_fee > other
+        elif isinstance(other, DeliveryFee):
+            return self.delivery_fee > other.delivery_fee
+        else:
+            raise TypeError(
+                f"Unsupported operand type(s) for >: '{type(self)}' and '{type(other)}'")
+
+    def __lt__(self, other: Self | int | float) -> bool:
+        if isinstance(other, (int, float)):
+            return self.delivery_fee < other
+        elif isinstance(other, DeliveryFee):
+            return self.delivery_fee < other.delivery_fee
+        else:
+            raise TypeError(
+                f"Unsupported operand type(s) for <: '{type(self)}' and '{type(other)}'")
+
+    def __eq__(self, other: Self | int | float) -> bool:
+        if isinstance(other, (int, float)):
+            return self.delivery_fee == other
+        elif isinstance(other, DeliveryFee):
+            return self.delivery_fee == other.delivery_fee
+        else:
+            raise TypeError(
+                f"Unsupported operand type(s) for ==: '{type(self)}' and '{type(other)}'")
+
+    def __assign__(self, other: Self | int | float) -> Self:
+        if isinstance(other, (int, float)):
+            self.delivery_fee = max(other, 0)
+        elif isinstance(other, DeliveryFee):
+            self.delivery_fee = max(other.delivery_fee, 0)
+        else:
+            raise TypeError(
+                f"Unsupported operand type(s) for =: '{type(self)}' and '{type(other)}'")
+        return self
