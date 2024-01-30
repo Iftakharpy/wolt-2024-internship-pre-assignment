@@ -35,4 +35,4 @@ class DeliveryFee(BaseModel):
 
 @app.post("/calculate_delivery_fee/")
 async def calculate_delivery_fee(order_info: OrderInfo) -> DeliveryFee:
-    return DeliveryFee(710)
+    return DeliveryFee(delivery_fee=710)
