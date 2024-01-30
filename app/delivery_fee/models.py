@@ -1,5 +1,5 @@
 from typing import Annotated, Self
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, field_validator
 from datetime import datetime
 
 
@@ -21,29 +21,31 @@ class OrderInfo(BaseModel):
                              ("Order time in UTC in ISO format. "
                               "Example: 2024-01-15T13:00:00Z")]
 
-    @validator('cart_value')
+    @field_validator('cart_value')
     def cart_value__must_be_non_negative(cls, value):
         if value < 0:
             raise ValueError('cart_value must be non-negative')
         return value
 
-    @validator('delivery_distance')
+    @field_validator('delivery_distance')
     def delivery_distance__must_be_non_negative(cls, value):
         if value < 0:
             raise ValueError('delivery_distance must be non-negative')
         return value
 
-    @validator('number_of_items')
+    @field_validator('number_of_items')
     def number_of_items__must_be_non_negative(cls, value):
         if value < 0:
             raise ValueError('number_of_items must be non-negative')
         return value
 
-    # @validator('delivery_time')
-    # def can_not_be_in_future(cls, value):
-    #     if value > datetime.now():
-    #         raise ValueError('delivery_time can not be in the future')
-    #     return value
+    @field_validator('delivery_time', mode='plain')
+    def delivery_time__parser(cls, value):
+        try:
+            return datetime.fromisoformat(value)
+        except ValueError:
+            raise ValueError(
+                'delivery_time must be in UTC ISO format (e.g. 2024-01-15T13:00:00Z)')
 
 
 class DeliveryFee(BaseModel):
@@ -52,7 +54,7 @@ class DeliveryFee(BaseModel):
                             ("Calculated delivery fee in cents. "
                              "Example: 710 (710 cents = 7.10€)")]
 
-    @validator('delivery_fee')
+    @field_validator('delivery_fee')
     def delivery_fee__must_be_non_negative(cls, value):
         if value < 0:
             raise ValueError('delivery_fee must be non-negative')
