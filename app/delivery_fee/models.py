@@ -1,26 +1,23 @@
 from typing import Annotated, Self
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, field_validator, Field, ConfigDict
 from datetime import datetime
 from math import ceil
 
 
 class OrderInfo(BaseModel):
     # in cents (e.g. €1.00 = 100 = 1e2)
-    cart_value: Annotated[int,
-                          ("Value of the shopping cart in cents. "
-                           "Example: 790 (790 cents = 7.90€)")]
+    cart_value: int = Field(description=("Value of the shopping cart in cents. "
+                                         "Example: 790 (790 cents = 7.90€)"))
     # in meters (e.g. 1km = 1000 = 1e3)
-    delivery_distance: Annotated[int,
-                                 ("The distance between the store and customer’s "
-                                  "location in meters. Example: 2235 (2235 meters "
-                                  "= 2.235 km)")]
-    number_of_items: Annotated[int,
-                               ("The number of items in the customer's shopping cart. "
-                                "Example: 4 (customer has 4 items in the cart)")]
+    delivery_distance: int = Field(description=("The distance between the store and customer’s "
+                                                "location in meters. Example: 2235 (2235 meters "
+                                                "= 2.235 km)"))
+
+    number_of_items: int = Field(description=("The number of items in the customer's shopping cart. "
+                                              "Example: 4 (customer has 4 items in the cart)"))
     # timestamp in UTC ISO format (e.g. 2024-01-15T13:00:00Z)
-    time: Annotated[datetime,
-                    ("Order time in UTC in ISO format. "
-                     "Example: 2024-01-15T13:00:00Z")]
+    time: datetime = Field(description=("Order time in UTC in ISO format. "
+                                        "Example: 2024-01-15T13:00:00Z"))
 
     @field_validator('cart_value')
     def cart_value__must_be_non_negative(cls, value):
@@ -53,9 +50,8 @@ class OrderInfo(BaseModel):
 
 class DeliveryFee(BaseModel):
     # in cents (e.g. €1.00 = 100 = 1e2)
-    delivery_fee: Annotated[int,
-                            ("Calculated delivery fee in cents. "
-                             "Example: 710 (710 cents = 7.10€)")]
+    delivery_fee: int = Field(description=("Calculated delivery fee in cents. "
+                                           "Example: 710 (710 cents = 7.10€)"))
 
     @field_validator('delivery_fee')
     def delivery_fee__must_be_non_negative(cls, value):
