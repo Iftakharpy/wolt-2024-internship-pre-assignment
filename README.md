@@ -37,6 +37,8 @@ After installing the dependencies, you can run the project by running the follow
 uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
 ```
 
+Then open your browser and go to `http://localhost:8000/docs` to see the docs of the api endpoints.
+
 > Note: Of course, you will have to be in the project's base directory(ie. where `Dockerfile` and `README.md` file is located) to for this command to work.🙂
 
 ## Run tests
