@@ -86,7 +86,7 @@ class DeliveryFee(BaseModel):
         total_fee = max(ceil(self.delivery_fee * other), 0)
         return DeliveryFee(delivery_fee=total_fee)
 
-    def __div__(self, other: int | float) -> Self:
+    def __truediv__(self, other: int | float) -> Self:
         if not isinstance(other, (int, float)):
             raise TypeError(
                 f"Unsupported operand type(s) for /: '{type(self)}' and '{type(other)}'")
