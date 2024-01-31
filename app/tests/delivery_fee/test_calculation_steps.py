@@ -1,6 +1,6 @@
 from datetime import datetime
-from ....app.delivery_fee.models import DeliveryFee, OrderInfo
-from ....app.delivery_fee.fee_calculation_steps import (
+from app.delivery_fee.models import DeliveryFee, OrderInfo
+from app.delivery_fee.fee_calculation_steps import (
     CartValueFee,
     DeliveryDistanceFee,
     NumberOfItemsFee,
