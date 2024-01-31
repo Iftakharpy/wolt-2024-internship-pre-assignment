@@ -62,6 +62,16 @@ class DeliveryFee(BaseModel):
             raise ValueError('delivery_fee must be non-negative')
         return value
 
+    def __sub__(self, other: Self | int | float) -> Self:
+        if isinstance(other, (int, float)):
+            total_fee = max(self.delivery_fee - other, 0)
+        elif isinstance(other, DeliveryFee):
+            total_fee = max(self.delivery_fee - other.delivery_fee, 0)
+        else:
+            raise TypeError(
+                f"Unsupported operand type(s) for -: '{type(self)}' and '{type(other)}'")
+        return DeliveryFee(delivery_fee=total_fee)
+
     def __add__(self, other: Self | int | float) -> Self:
         if isinstance(other, (int, float)):
             total_fee = max(self.delivery_fee + other, 0)
@@ -112,13 +122,3 @@ class DeliveryFee(BaseModel):
         else:
             raise TypeError(
                 f"Unsupported operand type(s) for ==: '{type(self)}' and '{type(other)}'")
-
-    def __assign__(self, other: Self | int | float) -> Self:
-        if isinstance(other, (int, float)):
-            self.delivery_fee = max(other, 0)
-        elif isinstance(other, DeliveryFee):
-            self.delivery_fee = max(other.delivery_fee, 0)
-        else:
-            raise TypeError(
-                f"Unsupported operand type(s) for =: '{type(self)}' and '{type(other)}'")
-        return self
