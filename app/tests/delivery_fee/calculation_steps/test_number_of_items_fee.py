@@ -88,7 +88,7 @@ def test__number_of_items_fee_bulk_charge_not_applied_for_edge_before_bulk(numbe
     assert delivery_fee == DeliveryFee(delivery_fee=expected_fee)
 
 
-def test__number_of_items_fee_bulk_charge_applied(number_of_items_fee: NumberOfItemsFee):
+def test__number_of_items_fee_bulk_charge_not_applied_for_items_below_threshold(number_of_items_fee: NumberOfItemsFee):
     number_of_items = 11
     items_over_surcharge_threshold = (number_of_items -
                                       settings.NUMBER_OF_ITEMS_CONFIG_OPTIONS.number_of_items_surcharge_threshold)
@@ -107,7 +107,7 @@ def test__number_of_items_fee_bulk_charge_applied(number_of_items_fee: NumberOfI
     assert delivery_fee == DeliveryFee(delivery_fee=expected_fee)
 
 
-def test__number_of_items_fee_bulk_charge_applied(number_of_items_fee: NumberOfItemsFee):
+def test__number_of_items_fee_bulk_charge_applied_for_just_over_threshold(number_of_items_fee: NumberOfItemsFee):
     number_of_items = 13
     items_over_surcharge_threshold = (number_of_items -
                                       settings.NUMBER_OF_ITEMS_CONFIG_OPTIONS.number_of_items_surcharge_threshold)
