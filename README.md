@@ -54,3 +54,59 @@ pytest -v
 ## To get coverage report
 
 To get the coverage report, open the terminal in the project base directory, this means the the directory where the `pytest.ini` is located. Then run the `coverage.sh` or `coverage.ps1` depending on your operating system.
+
+## Project structure
+
+All the files related to the project are located in the `app` directory. The `app` directory contains the following files and directories:
+
+```bash
+.
+│   main.py
+│   __init__.py
+│
+├───delivery_fee
+│       fee_calculation_steps.py
+│       fee_calculator.py
+│       fee_transformers.py
+│       models.py
+│       router.py
+│       settings.py
+│       utility_meta_classes.py
+│       __init__.py
+│
+└───tests
+    │   test_main.py
+    │   __init__.py
+    │
+    └───delivery_fee
+        │   test_fee_calculator_initialization.py
+        │   __init__.py
+        │
+        ├───calculation_steps
+        │       test_cart_value_fee.py
+        │       test_delivery_distance_fee.py
+        │       test_number_of_items_fee.py
+        │       __init__.py
+        │
+        ├───calculation_transformers
+        │       test_limit_fee_transformer.py
+        │       test_reduce_fee_transformer.py
+        │       test_rush_hour_fee_transformer.py
+        │       __init__.py
+        │
+        └───model
+                test_delivery_fee.py
+                test_order_info.py
+```
+
+-   `./app/tests/` has all the test cases organized logically under corresponding subfolders. The subfolders is created for each module in the `./app/delivery_fee/` directory on when the number of test cases are too much to store in one file.
+-   `main.py` is the entry point of the application.
+-   `./app/delivery_fee/` has all the modules related to the delivery fee calculation.
+-   `./app/delivery_fee/router.py` has the router for the delivery fee calculation api.
+-   `./app/delivery_fee/models.py` has the pydantic models used in the api these are used for data parsing.
+-   `./app/delivery_fee/settings.py` has the settings for the delivery fee calculation api.
+-   `./app/delivery_fee/utility_meta_classes.py` has the utility meta classes these are used to create the singleton classes.
+-   `./app/delivery_fee/fee_calculator.py` has the fee calculator class which is used to calculate the delivery fee.
+-   `./app/delivery_fee/fee_calculation_steps.py` has the fee calculation steps which are used to calculate the delivery fee. These does not modify the fee, they calculate fee depending on the order info.
+-   `./app/delivery_fee/fee_transformers.py` has the fee transformers which are used to modify the fee. These does not calculate the fee, they modify the fee depending on the order info.
+-   `./app/delivery_fee/fee_calculator.py` has the fee calculator class which is used to first follow the delivery calculation steps and then applies the transformers to apply any rules on the calculated fee.
