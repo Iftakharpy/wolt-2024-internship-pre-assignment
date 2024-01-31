@@ -1,6 +1,6 @@
 from datetime import datetime
-from app.delivery_fee.models import DeliveryFee, OrderInfo
-from app.delivery_fee.fee_transformers import (
+from ....app.delivery_fee.models import DeliveryFee, OrderInfo
+from ....app.delivery_fee.fee_transformers import (
     FridayRushHourFeeTransformer,
     ExcludeFeeTransformer,
     LimitFeeTransformer,
@@ -13,7 +13,7 @@ def test__friday_rush_hour_fee_transformer():
         cart_value=0,
         delivery_distance=0,
         number_of_items=0,
-        delivery_time="2024-01-30T13:00:00Z"  # Not Friday and not rush hour
+        time="2024-01-30T13:00:00Z"  # Not Friday and not rush hour
     )
     delivery_fee = friday_rush_hour_fee_transformer.transform(
         order_info,
@@ -26,7 +26,7 @@ def test__friday_rush_hour_fee_transformer():
         cart_value=0,
         delivery_distance=0,
         number_of_items=0,
-        delivery_time="2024-01-30T16:00:00Z"  # Not Friday but in rush hour range
+        time="2024-01-30T16:00:00Z"  # Not Friday but in rush hour range
     )
     delivery_fee = friday_rush_hour_fee_transformer.transform(
         order_info,
@@ -40,7 +40,7 @@ def test__friday_rush_hour_fee_transformer():
         cart_value=0,
         delivery_distance=0,
         number_of_items=0,
-        delivery_time="2024-01-26T13:00:00Z"
+        time="2024-01-26T13:00:00Z"
     )
     delivery_fee = friday_rush_hour_fee_transformer.transform(
         order_info,
@@ -54,7 +54,7 @@ def test__friday_rush_hour_fee_transformer():
         cart_value=5e2,
         delivery_distance=0,
         number_of_items=0,
-        delivery_time="2024-01-26T15:00:00Z"  # Friday and in rush hour range
+        time="2024-01-26T15:00:00Z"  # Friday and in rush hour range
     )
     delivery_fee = DeliveryFee(delivery_fee=10e2 - 5e2)
     transformed_delivery_fee = friday_rush_hour_fee_transformer.transform(
@@ -69,7 +69,7 @@ def test__friday_rush_hour_fee_transformer():
         cart_value=5e2,
         delivery_distance=0,
         number_of_items=0,
-        delivery_time="2024-01-26T19:00:00Z"  # Friday and in rush hour range
+        time="2024-01-26T19:00:00Z"  # Friday and in rush hour range
     )
     delivery_fee = DeliveryFee(delivery_fee=10e2 - 5e2)
     transformed_delivery_fee = friday_rush_hour_fee_transformer.transform(
@@ -84,7 +84,7 @@ def test__friday_rush_hour_fee_transformer():
         cart_value=5e2,
         delivery_distance=0,
         number_of_items=0,
-        delivery_time="2024-01-26T20:00:00Z"  # Friday and in rush hour range
+        time="2024-01-26T20:00:00Z"  # Friday and in rush hour range
     )
     delivery_fee = DeliveryFee(delivery_fee=10e2 - 5e2)
     transformed_delivery_fee = friday_rush_hour_fee_transformer.transform(
@@ -102,7 +102,7 @@ def test__exclude_fee_transformer():
         cart_value=0,
         delivery_distance=0,
         number_of_items=0,
-        delivery_time="2024-01-30T13:00:00Z"
+        time="2024-01-30T13:00:00Z"
     )
     delivery_fee = exclude_fee_transformer.transform(
         order_info,
@@ -115,7 +115,7 @@ def test__exclude_fee_transformer():
         cart_value=200e2,
         delivery_distance=0,
         number_of_items=0,
-        delivery_time="2024-01-30T13:00:00Z"
+        time="2024-01-30T13:00:00Z"
     )
     delivery_fee = exclude_fee_transformer.transform(
         order_info,
@@ -128,7 +128,7 @@ def test__exclude_fee_transformer():
         cart_value=200e2 + 1,
         delivery_distance=0,
         number_of_items=0,
-        delivery_time="2024-01-30T13:00:00Z"
+        time="2024-01-30T13:00:00Z"
     )
     delivery_fee = exclude_fee_transformer.transform(
         order_info,
@@ -144,7 +144,7 @@ def test__limit_fee_transformer():
         cart_value=0,
         delivery_distance=0,
         number_of_items=0,
-        delivery_time="2024-01-30T13:00:00Z"
+        time="2024-01-30T13:00:00Z"
     )
     delivery_fee = limit_fee_transformer.transform(
         order_info,
@@ -157,7 +157,7 @@ def test__limit_fee_transformer():
         cart_value=0,
         delivery_distance=0,
         number_of_items=0,
-        delivery_time="2024-01-30T13:00:00Z"
+        time="2024-01-30T13:00:00Z"
     )
     delivery_fee = limit_fee_transformer.transform(
         order_info,
@@ -170,7 +170,7 @@ def test__limit_fee_transformer():
         cart_value=0,
         delivery_distance=0,
         number_of_items=0,
-        delivery_time="2024-01-30T13:00:00Z"
+        time="2024-01-30T13:00:00Z"
     )
     delivery_fee = limit_fee_transformer.transform(
         order_info,
