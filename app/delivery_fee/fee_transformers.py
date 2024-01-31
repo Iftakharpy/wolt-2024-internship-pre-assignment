@@ -25,7 +25,7 @@ class FridayRushHourFeeTransformer(DeliveryFeeTransformer):
 
     @classmethod
     def transform(self, delivery_info: OrderInfo, delivery_fee: DeliveryFee) -> DeliveryFee:
-        timestamp = Timestamp(delivery_info.delivery_time)
+        timestamp = Timestamp(delivery_info.time)
         transformed_delivery_fee = deepcopy(delivery_fee)
 
         rush_day = "Friday"
@@ -49,7 +49,8 @@ class LimitFeeTransformer(DeliveryFeeTransformer):
         highest_limit_of_delivery_fee = 15e2  # 15€
 
         if transformed_delivery_fee > highest_limit_of_delivery_fee:
-            transformed_delivery_fee = highest_limit_of_delivery_fee
+            transformed_delivery_fee = DeliveryFee(
+                delivery_fee=highest_limit_of_delivery_fee)
 
         return transformed_delivery_fee
 

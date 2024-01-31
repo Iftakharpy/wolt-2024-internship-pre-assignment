@@ -1,6 +1,7 @@
 from typing import Annotated, Self
 from pydantic import BaseModel, field_validator
 from datetime import datetime
+from math import ceil
 
 
 class OrderInfo(BaseModel):
@@ -17,9 +18,9 @@ class OrderInfo(BaseModel):
                                ("The number of items in the customer's shopping cart. "
                                 "Example: 4 (customer has 4 items in the cart)")]
     # timestamp in UTC ISO format (e.g. 2024-01-15T13:00:00Z)
-    delivery_time: Annotated[datetime,
-                             ("Order time in UTC in ISO format. "
-                              "Example: 2024-01-15T13:00:00Z")]
+    time: Annotated[datetime,
+                    ("Order time in UTC in ISO format. "
+                     "Example: 2024-01-15T13:00:00Z")]
 
     @field_validator('cart_value')
     def cart_value__must_be_non_negative(cls, value):
@@ -33,21 +34,21 @@ class OrderInfo(BaseModel):
             raise ValueError('delivery_distance must be non-negative')
         return value
 
-    @field_validator('number_of_items')
+    @field_validator('number_of_items', mode='after')
     def number_of_items__must_be_non_negative(cls, value):
         if value < 0:
             raise ValueError('number_of_items must be non-negative')
         return value
 
-    @field_validator('delivery_time', mode='before')
+    @field_validator('time', mode='before')
     def delivery_time__parser(cls, value):
         try:
             if isinstance(value, str):
                 return datetime.fromisoformat(value)
-            raise ValueError
+            raise ValueError()
         except ValueError:
             raise ValueError(
-                'delivery_time must be in UTC ISO format (e.g. 2024-01-15T13:00:00Z)')
+                'time must be in UTC ISO format (e.g. 2024-01-15T13:00:00Z)')
 
 
 class DeliveryFee(BaseModel):
@@ -86,14 +87,14 @@ class DeliveryFee(BaseModel):
         if not isinstance(other, (int, float)):
             raise TypeError(
                 f"Unsupported operand type(s) for *: '{type(self)}' and '{type(other)}'")
-        total_fee = max(self.delivery_fee * other, 0)
+        total_fee = max(ceil(self.delivery_fee * other), 0)
         return DeliveryFee(delivery_fee=total_fee)
 
     def __div__(self, other: int | float) -> Self:
         if not isinstance(other, (int, float)):
             raise TypeError(
                 f"Unsupported operand type(s) for /: '{type(self)}' and '{type(other)}'")
-        total_fee = max(self.delivery_fee / other, 0)
+        total_fee = max(ceil(self.delivery_fee / other), 0)
         return DeliveryFee(delivery_fee=total_fee)
 
     def __gt__(self, other: Self | int | float) -> bool:
