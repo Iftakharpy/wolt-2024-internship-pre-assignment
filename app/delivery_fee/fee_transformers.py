@@ -3,6 +3,8 @@ from app.delivery_fee.models import OrderInfo, DeliveryFee
 from copy import deepcopy
 from pandas import Timestamp
 from datetime import time
+from pydantic import BaseModel
+from typing import Self
 
 
 class DeliveryFeeTransformer(ABC):
@@ -11,7 +13,9 @@ class DeliveryFeeTransformer(ABC):
     the delivery fee has been calculated. So any subclass of this class
     is essentially one of the rules to transform the delivery fee."""
 
-    @classmethod
+    class ConfigOptions(BaseModel):
+        """Configuration options for DeliveryFeeTransformer."""
+
     @abstractmethod
     def transform(self, delivery_info: OrderInfo, delivery_fee: DeliveryFee) -> DeliveryFee:
         """Transform the delivery fee."""
@@ -23,34 +27,64 @@ class FridayRushHourFeeTransformer(DeliveryFeeTransformer):
     total fee including possible surcharges) will be multiplied 
     by 1.2x. Friday rush is 3 - 7 PM UTC."""
 
-    @classmethod
+    class ConfigOptions(BaseModel):
+        """Configuration options for FridayRushHourFeeTransformer.
+
+        Default for Friday rush hour from 3:00:00 PM to 7:59:59.999999 PM UTC.
+        >>> from datetime import time
+        >>> rush_day: str = "Friday"
+        >>> rush_hour_start: time = time(hour=12+3, minute=0)  # 3:00:00 PM (inclusive)
+        >>> # 7:59:59.999999 PM (inclusive)
+        >>> rush_hour_end: time = time(hour=12+7, minute=59, second=59, microsecond=999999)
+        >>> rush_hour_fee_factor: float = 1.2  # 20% increase
+        """
+        rush_day: str = "Friday"
+        rush_hour_start: time = time(hour=12+3, minute=0)  # 3:00:00 PM
+        # 7:59:59.999999 PM
+        rush_hour_end: time = time(hour=12+7, minute=59, second=59, microsecond=999999)
+        rush_hour_fee_factor: float = 1.2  # 20% increase
+
+    def __init__(self, config_options: ConfigOptions | None = None) -> None:
+        super().__init__()
+        self.config_options = config_options
+        if config_options is None:
+            self.config_options = self.ConfigOptions()
+
     def transform(self, delivery_info: OrderInfo, delivery_fee: DeliveryFee) -> DeliveryFee:
         timestamp = Timestamp(delivery_info.time)
         transformed_delivery_fee = deepcopy(delivery_fee)
 
-        rush_day = "Friday"
-        rush_hour_start = time(hour=12+3, minute=0)  # 3:00:00 PM
-        # 7:59:59.999999 PM
-        rush_hour_end = time(hour=12+7, minute=59, second=59, microsecond=999999)
-        rush_hour_fee_factor = 1.2  # 20% increase
+        if (timestamp.day_name() == self.config_options.rush_day and
+                (self.config_options.rush_hour_start <= timestamp.time() <= self.config_options.rush_hour_end)):
+            transformed_delivery_fee *= self.config_options.rush_hour_fee_factor
 
-        if (timestamp.day_name() == rush_day and
-                (rush_hour_start <= timestamp.time() <= rush_hour_end)):
-            transformed_delivery_fee *= rush_hour_fee_factor
         return transformed_delivery_fee
 
 
 class LimitFeeTransformer(DeliveryFeeTransformer):
     """Transforms the delivery fee base don the following:
     The delivery fee can never be more than 15€, including possible surcharges."""
-    @classmethod
+
+    class ConfigOptions(BaseModel):
+        """Configuration options for LimitFeeTransformer.
+
+        Default options are:
+        >>> highest_limit_of_delivery_fee = 15e2  # 15€ (exclusive)
+        """
+        highest_limit_of_delivery_fee: int = 15e2
+
+    def __init__(self, config_options: ConfigOptions | None = None) -> None:
+        super().__init__()
+        self.config_options = config_options
+        if config_options is None:
+            self.config_options = self.ConfigOptions()
+
     def transform(self, delivery_info: OrderInfo, delivery_fee: DeliveryFee) -> DeliveryFee:
         transformed_delivery_fee = deepcopy(delivery_fee)
-        highest_limit_of_delivery_fee = 15e2  # 15€
 
-        if transformed_delivery_fee > highest_limit_of_delivery_fee:
+        if transformed_delivery_fee > self.config_options.highest_limit_of_delivery_fee:
             transformed_delivery_fee = DeliveryFee(
-                delivery_fee=highest_limit_of_delivery_fee)
+                delivery_fee=self.config_options.highest_limit_of_delivery_fee)
 
         return transformed_delivery_fee
 
@@ -58,16 +92,29 @@ class LimitFeeTransformer(DeliveryFeeTransformer):
 class ExcludeFeeTransformer(DeliveryFeeTransformer):
     """Transforms the delivery fee base don the following:
     The delivery is free (0€) when the cart value is equal or more than 200€."""
-    @classmethod
+
+    class ConfigOptions(BaseModel):
+        """Configuration options for ExcludeFeeTransformer.
+
+        Default options are:
+        >>> exclusion_cart_value_threshold = 200e2  # 200€ (inclusive)
+        >>> exclusion_delivery_fee_factor = 1  # 100% decrease
+        """
+        exclusion_cart_value_threshold: int = 200e2
+        exclusion_delivery_fee_factor: float = 1
+
+    def __init__(self, config_options: ConfigOptions | None = None) -> None:
+        super().__init__()
+        self.config_options = config_options
+        if config_options is None:
+            self.config_options = self.ConfigOptions()
+
     def transform(self, delivery_info: OrderInfo, delivery_fee: DeliveryFee) -> DeliveryFee:
         transformed_delivery_fee = deepcopy(delivery_fee)
 
-        exclusion_cart_value_threshold = 200e2  # 200€
-        exclusion_delivery_fee_factor = 1  # 100% decrease
-
-        if delivery_info.cart_value >= exclusion_cart_value_threshold:
+        if delivery_info.cart_value >= self.config_options.exclusion_cart_value_threshold:
             transformed_delivery_fee -= (transformed_delivery_fee *
-                                         exclusion_delivery_fee_factor)
+                                         self.config_options.exclusion_delivery_fee_factor)
 
         return transformed_delivery_fee
 
@@ -81,11 +128,3 @@ charge anything.
 Or perhaps, one transformer that checks if cart_value, delivery_distance and
 number_of_items are 0 and if so, set the delivery fee to 0. Or throw error.
 """
-
-# All fee transformers as singleton.
-# Here order of the transformers matters.
-ALL_FEE_TRANSFORMERS = [
-    FridayRushHourFeeTransformer,
-    LimitFeeTransformer,
-    ExcludeFeeTransformer
-]

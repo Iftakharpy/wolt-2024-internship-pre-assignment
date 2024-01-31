@@ -1,7 +1,8 @@
-from app.delivery_fee.fee_calculation_steps import ALL_CALCULATION_STEPS, DeliveryFeeCalculationStep
-from app.delivery_fee.fee_transformers import ALL_FEE_TRANSFORMERS, DeliveryFeeTransformer
+from app.delivery_fee.fee_calculation_steps import DeliveryFeeCalculationStep
+from app.delivery_fee.fee_transformers import DeliveryFeeTransformer
 from app.delivery_fee.models import OrderInfo, DeliveryFee
 from app.delivery_fee.utility_meta_classes import ThreadSafeSingletonMeta
+import app.delivery_fee.settings as settings
 
 
 class DeliveryFeeCalculator(metaclass=ThreadSafeSingletonMeta):
@@ -13,11 +14,11 @@ class DeliveryFeeCalculator(metaclass=ThreadSafeSingletonMeta):
                  calculation_configurations: None = None):
         self.calculation_steps = calculation_steps
         if calculation_steps is None:
-            self.calculation_steps = ALL_CALCULATION_STEPS
+            self.calculation_steps = settings.ALL_CALCULATION_STEPS
 
         self.transformers = transformers
         if transformers is None:
-            self.transformers = ALL_FEE_TRANSFORMERS
+            self.transformers = settings.ALL_FEE_TRANSFORMERS
 
         # This is a plan for future, so that parameters can be changed easily.
         # And may be in the future we can have different configurations for
@@ -42,4 +43,4 @@ class DeliveryFeeCalculator(metaclass=ThreadSafeSingletonMeta):
 
 # Delivery calculator singleton.
 DELIVERY_FEE_CALCULATOR = DeliveryFeeCalculator(
-    ALL_CALCULATION_STEPS, ALL_FEE_TRANSFORMERS)
+    settings.ALL_CALCULATION_STEPS, settings.ALL_FEE_TRANSFORMERS)

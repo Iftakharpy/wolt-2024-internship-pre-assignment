@@ -1,5 +1,5 @@
-from app.delivery_fee.fee_calculation_steps import ALL_CALCULATION_STEPS
-from app.delivery_fee.fee_transformers import ALL_FEE_TRANSFORMERS
+from app.delivery_fee.settings import ALL_CALCULATION_STEPS
+from app.delivery_fee.settings import ALL_FEE_TRANSFORMERS
 from app.delivery_fee.fee_calculator import DeliveryFeeCalculator
 
 
