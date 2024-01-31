@@ -31,6 +31,14 @@ pip install -r requirements.txt
 > Note: You might need to use `pip3` instead of `pip` depending on your python installation.
 > And also your current directory should be the project base directory, this means the the directory where the `requirements.txt` is located.
 
+After installing the dependencies, you can run the project by running the following command in the terminal:
+
+```bash
+uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
+```
+
+> Note: Of course, you will have to be in the project's base directory(ie. where `Dockerfile` and `README.md` file is located) to for this command to work.🙂
+
 ## Run tests
 
 To run the tests, open the terminal in the project base directory, this means the the directory where the `pytest.ini` is located. Then run the following command:
