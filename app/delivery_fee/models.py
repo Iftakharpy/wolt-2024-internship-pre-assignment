@@ -1,5 +1,5 @@
-from typing import Annotated, Self
-from pydantic import BaseModel, field_validator, Field, ConfigDict
+from typing import Self
+from pydantic import BaseModel, field_validator, Field
 from datetime import datetime
 from math import ceil
 
