@@ -110,3 +110,10 @@ All the files related to the project are located in the `app` directory. The `ap
 -   `./app/delivery_fee/fee_calculation_steps.py` has the fee calculation steps which are used to calculate the delivery fee. These does not modify the fee, they calculate fee depending on the order info.
 -   `./app/delivery_fee/fee_transformers.py` has the fee transformers which are used to modify the fee. These does not calculate the fee, they modify the fee depending on the order info.
 -   `./app/delivery_fee/fee_calculator.py` has the fee calculator class which is used to first follow the delivery calculation steps and then applies the transformers to apply any rules on the calculated fee.
+
+## Class relationships
+
+-   `DeliveryFeeTransformer` and `DeliveryFeeCalculationStep` are interfaces. These are
+    implemented by the other classes in the `fee_transformers.py` and `fee_calculation_steps.py` files respectively. Each of these classes has
+    their own ConfigOptions sub class which holds the options when calculating or transforming the fee.
+-   `DeliveryFeeCalculator` is the main class which is used to calculate the delivery fee. It uses the `DeliveryFeeCalculationStep` and `DeliveryFeeTransformer` classes to calculate and transform the fee.
