@@ -5,12 +5,24 @@ from pandas import Timestamp
 
 
 class DeliveryFeeTransformer(ABC):
+    """Abstract class for all the fee transformers. 
+    This class is used to transform the delivery fee after 
+    the delivery fee has been calculated. So any subclass of this class
+    is essentially one of the rules to transform the delivery fee."""
+
+    @classmethod
     @abstractmethod
     def transform(self, delivery_info: OrderInfo, delivery_fee: DeliveryFee) -> DeliveryFee:
         """Transform the delivery fee."""
 
 
 class FridayRushHourFeeTransformer(DeliveryFeeTransformer):
+    """Transforms the delivery fee base don the following:
+    During the Friday rush, 3 - 7 PM, the delivery fee (the 
+    total fee including possible surcharges) will be multiplied 
+    by 1.2x. Friday rush is 3 - 7 PM UTC."""
+
+    @classmethod
     def transform(self, delivery_info: OrderInfo, delivery_fee: DeliveryFee) -> DeliveryFee:
         transformed_delivery_fee = deepcopy(delivery_fee)
         rush_day = "Friday"
@@ -26,6 +38,9 @@ class FridayRushHourFeeTransformer(DeliveryFeeTransformer):
 
 
 class LimitFeeTransformer(DeliveryFeeTransformer):
+    """Transforms the delivery fee base don the following:
+    The delivery fee can never be more than 15€, including possible surcharges."""
+    @classmethod
     def transform(self, delivery_info: OrderInfo, delivery_fee: DeliveryFee) -> DeliveryFee:
         transformed_delivery_fee = deepcopy(delivery_fee)
         highest_limit_of_delivery_fee = 15e2  # 15€
@@ -37,6 +52,9 @@ class LimitFeeTransformer(DeliveryFeeTransformer):
 
 
 class ExcludeFeeTransformer(DeliveryFeeTransformer):
+    """Transforms the delivery fee base don the following:
+    The delivery is free (0€) when the cart value is equal or more than 200€."""
+    @classmethod
     def transform(self, delivery_info: OrderInfo, delivery_fee: DeliveryFee) -> DeliveryFee:
         transformed_delivery_fee = deepcopy(delivery_fee)
 
@@ -60,9 +78,10 @@ Or perhaps, one transformer that checks if cart_value, delivery_distance and
 number_of_items are 0 and if so, set the delivery fee to 0. Or throw error.
 """
 
-
+# All fee transformers as singleton.
+# Here order of the transformers matters.
 ALL_FEE_TRANSFORMERS = [
-    FridayRushHourFeeTransformer(),
-    LimitFeeTransformer(),
-    ExcludeFeeTransformer()
+    FridayRushHourFeeTransformer,
+    LimitFeeTransformer,
+    ExcludeFeeTransformer
 ]
