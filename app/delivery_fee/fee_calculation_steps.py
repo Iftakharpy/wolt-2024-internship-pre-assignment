@@ -43,8 +43,8 @@ class CartValueFee(DeliveryFeeCalculationStep):
 
         # Apply surcharge if cart value is less than 10€.
         if (order_info.cart_value < self.config_options.cart_value_surcharge_threshold):
-            surcharge = self.config_options.cart_value_surcharge_threshold - order_info.cart_value
-            delivery_fee += DeliveryFee(delivery_fee=surcharge)
+            delivery_fee += (self.config_options.cart_value_surcharge_threshold -
+                             order_info.cart_value)
 
         return delivery_fee
 
@@ -127,7 +127,7 @@ class NumberOfItemsFee(DeliveryFeeCalculationStep):
         """Configuration options for NumberOfItemsFee.
 
         Default options are:
-        >>> number_of_items_surcharge_threshold = 4  # 4 items (inclusive)
+        >>> number_of_items_surcharge_threshold = 4  # 4 items (exclusive)
         >>> surcharge_per_item_over_threshold = 50  # 50 cents
         >>> bulk_charge = 1.2e2  # 1.20€
         >>> bulk_charge_threshold = 12 (exclusive)

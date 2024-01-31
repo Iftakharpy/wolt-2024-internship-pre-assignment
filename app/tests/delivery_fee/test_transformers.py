@@ -1,13 +1,13 @@
 from app.delivery_fee.models import DeliveryFee, OrderInfo
 from app.delivery_fee.fee_transformers import (
-    FridayRushHourFeeTransformer,
-    ExcludeFeeTransformer,
+    RushHourFeeTransformer,
+    ReduceFeeTransformer,
     LimitFeeTransformer,
 )
 
 
 def test__friday_rush_hour_fee_transformer():
-    friday_rush_hour_fee_transformer = FridayRushHourFeeTransformer()
+    friday_rush_hour_fee_transformer = RushHourFeeTransformer()
     order_info = OrderInfo(
         cart_value=0,
         delivery_distance=0,
@@ -16,10 +16,10 @@ def test__friday_rush_hour_fee_transformer():
     )
     delivery_fee = friday_rush_hour_fee_transformer.transform(
         order_info,
-        DeliveryFee(delivery_fee=0)
+        DeliveryFee(delivery_fee=2e2)
     )
     # Delivery time is not Friday and not in rush hour range, so no surcharge is applied.
-    assert delivery_fee == DeliveryFee(delivery_fee=0)
+    assert delivery_fee == DeliveryFee(delivery_fee=2e2)
 
     order_info = OrderInfo(
         cart_value=0,
@@ -96,7 +96,7 @@ def test__friday_rush_hour_fee_transformer():
 
 
 def test__exclude_fee_transformer():
-    exclude_fee_transformer = ExcludeFeeTransformer()
+    exclude_fee_transformer = ReduceFeeTransformer()
     order_info = OrderInfo(
         cart_value=0,
         delivery_distance=0,

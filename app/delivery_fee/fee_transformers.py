@@ -21,14 +21,14 @@ class DeliveryFeeTransformer(ABC):
         """Transform the delivery fee."""
 
 
-class FridayRushHourFeeTransformer(DeliveryFeeTransformer):
+class RushHourFeeTransformer(DeliveryFeeTransformer):
     """Transforms the delivery fee base don the following:
     During the Friday rush, 3 - 7 PM, the delivery fee (the 
     total fee including possible surcharges) will be multiplied 
     by 1.2x. Friday rush is 3 - 7 PM UTC."""
 
     class ConfigOptions(BaseModel):
-        """Configuration options for FridayRushHourFeeTransformer.
+        """Configuration options for RushHourFeeTransformer.
 
         Default for Friday rush hour from 3:00:00 PM to 7:59:59.999999 PM UTC.
         >>> from datetime import time
@@ -69,7 +69,7 @@ class LimitFeeTransformer(DeliveryFeeTransformer):
         """Configuration options for LimitFeeTransformer.
 
         Default options are:
-        >>> highest_limit_of_delivery_fee = 15e2  # 15€ (exclusive)
+        >>> highest_limit_of_delivery_fee = 15e2  # 15€ (inclusive)
         """
         highest_limit_of_delivery_fee: int = 15e2
 
@@ -82,14 +82,14 @@ class LimitFeeTransformer(DeliveryFeeTransformer):
     def transform(self, delivery_info: OrderInfo, delivery_fee: DeliveryFee) -> DeliveryFee:
         transformed_delivery_fee = deepcopy(delivery_fee)
 
-        if transformed_delivery_fee > self.config_options.highest_limit_of_delivery_fee:
+        if transformed_delivery_fee >= self.config_options.highest_limit_of_delivery_fee:
             transformed_delivery_fee = DeliveryFee(
                 delivery_fee=self.config_options.highest_limit_of_delivery_fee)
 
         return transformed_delivery_fee
 
 
-class ExcludeFeeTransformer(DeliveryFeeTransformer):
+class ReduceFeeTransformer(DeliveryFeeTransformer):
     """Transforms the delivery fee base don the following:
     The delivery is free (0€) when the cart value is equal or more than 200€."""
 

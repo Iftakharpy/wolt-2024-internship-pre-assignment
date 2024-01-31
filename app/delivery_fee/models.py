@@ -102,6 +102,11 @@ class DeliveryFee(BaseModel):
             raise TypeError(
                 f"Unsupported operand type(s) for >: '{type(self)}' and '{type(other)}'")
 
+    def __ge__(self, other: Self | int | float) -> bool:
+        if self > other or self == other:
+            return True
+        return False
+
     def __lt__(self, other: Self | int | float) -> bool:
         if isinstance(other, (int, float)):
             return self.delivery_fee < other
@@ -110,6 +115,11 @@ class DeliveryFee(BaseModel):
         else:
             raise TypeError(
                 f"Unsupported operand type(s) for <: '{type(self)}' and '{type(other)}'")
+
+    def __le__(self, other: Self | int | float) -> bool:
+        if self < other or self == other:
+            return True
+        return False
 
     def __eq__(self, other: Self | int | float) -> bool:
         if isinstance(other, (int, float)):
