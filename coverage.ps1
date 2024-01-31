@@ -2,15 +2,15 @@ param(
 	[bool]$clean = $false
 )
 
+# Responsible for cleaning coverage files
 function Clean {
 	Remove-Item -Path .\htmlcov -Recurse -Force
 	Remove-Item -Path .\*.coverage -Force
 }
 
+# Responsible for generating coverage report
 function Generate {
-	# Run pytest
 	python3 -m coverage run -m pytest
-	# Generate coverage report
 	python3 -m coverage html
 }
 
