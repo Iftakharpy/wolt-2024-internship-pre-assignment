@@ -1,29 +1,45 @@
 from .fee_calculation_steps import ALL_CALCULATION_STEPS, DeliveryFeeCalculationStep
 from .fee_transformers import ALL_FEE_TRANSFORMERS, DeliveryFeeTransformer
 from .models import OrderInfo, DeliveryFee
+from .utility_meta_classes import ThreadSafeSingletonMeta
 
 
-class DeliveryFeeCalculator:
-    def __init__(self, delivery_fee_calculation_steps: list[DeliveryFeeCalculationStep] = ALL_CALCULATION_STEPS,
-                 delivery_fee_transformers: list[DeliveryFeeTransformer] = ALL_FEE_TRANSFORMERS,
-                 delivery_fee_calculation_configurations: None = None):
-        self.delivery_fee_calculation_steps = delivery_fee_calculation_steps
-        self.delivery_fee_transformers = delivery_fee_transformers
-        # Thi is a plan for future, so that parameters can be changed dynamically.
-        self.delivery_fee_calculation_configurations = delivery_fee_calculation_configurations
+class DeliveryFeeCalculator(metaclass=ThreadSafeSingletonMeta):
+    """Calculates delivery fee. This is singleton class. This means only the first
+    instance of this class will be used throughout the application."""
+
+    def __init__(self, calculation_steps: list[DeliveryFeeCalculationStep] | None = None,
+                 transformers: list[DeliveryFeeTransformer] | None = None,
+                 calculation_configurations: None = None):
+        self.calculation_steps = calculation_steps
+        if calculation_steps is None:
+            self.calculation_steps = ALL_CALCULATION_STEPS
+
+        self.transformers = transformers
+        if transformers is None:
+            self.transformers = ALL_FEE_TRANSFORMERS
+
+        # This is a plan for future, so that parameters can be changed easily.
+        # And may be in the future we can have different configurations for
+        # different users depending on country, city, etc.
+        self.calculation_configurations = calculation_configurations
+        if calculation_configurations is None:
+            self.calculation_configurations = None
 
     def calculate(self, order_info: OrderInfo) -> DeliveryFee:
         calculated_fee = DeliveryFee(delivery_fee=0)
 
         # Follow all the steps to calculate the delivery fee.
-        for step in self.delivery_fee_calculation_steps:
+        for step in self.calculation_steps:
             calculated_fee += step.calculate(order_info)
 
         # Apply all the transformations to the calculated delivery fee.
-        for transformer in self.delivery_fee_transformers:
+        for transformer in self.transformers:
             calculated_fee = transformer.transform(order_info, calculated_fee)
 
         return calculated_fee
 
 
-DELIVERY_FEE_CALCULATOR = DeliveryFeeCalculator()
+# Delivery calculator singleton.
+DELIVERY_FEE_CALCULATOR = DeliveryFeeCalculator(
+    ALL_CALCULATION_STEPS, ALL_FEE_TRANSFORMERS)
