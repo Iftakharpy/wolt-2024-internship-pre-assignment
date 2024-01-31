@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from .models import OrderInfo, DeliveryFee
 from copy import deepcopy
 from pandas import Timestamp
+from datetime import time
 
 
 class DeliveryFeeTransformer(ABC):
@@ -24,16 +25,18 @@ class FridayRushHourFeeTransformer(DeliveryFeeTransformer):
 
     @classmethod
     def transform(self, delivery_info: OrderInfo, delivery_fee: DeliveryFee) -> DeliveryFee:
-        transformed_delivery_fee = deepcopy(delivery_fee)
-        rush_day = "Friday"
-        rush_hour_start = 12 + 3    # 3pm
-        rush_hour_end = 12 + 7      # 7pm
-        rush_hour_factor = 1.2      # 20% increase
         timestamp = Timestamp(delivery_info.delivery_time)
+        transformed_delivery_fee = deepcopy(delivery_fee)
+
+        rush_day = "Friday"
+        rush_hour_start = time(hour=12+3, minute=0)  # 3:00:00 PM
+        # 7:59:59.999999 PM
+        rush_hour_end = time(hour=12+7, minute=59, second=59, microsecond=999999)
+        rush_hour_fee_factor = 1.2  # 20% increase
 
         if (timestamp.day_name() == rush_day and
-                (rush_hour_start <= timestamp.hour <= rush_hour_end)):
-            transformed_delivery_fee *= rush_hour_factor
+                (rush_hour_start <= timestamp.time() <= rush_hour_end)):
+            transformed_delivery_fee *= rush_hour_fee_factor
         return transformed_delivery_fee
 
 
