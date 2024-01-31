@@ -1,7 +1,7 @@
 import uvicorn
 from fastapi import FastAPI, APIRouter
 from fastapi.responses import RedirectResponse
-from .delivery_fee.router import delivery_fee_router
+from app.delivery_fee.router import delivery_fee_router
 from http import HTTPStatus
 
 
@@ -25,5 +25,9 @@ async def redirect_to_docs():
     return RedirectResponse(url="/docs", status_code=HTTPStatus.PERMANENT_REDIRECT)
 
 
-if __name__ == "__main__":
+def run():
     uvicorn.run(app, host="127.0.0.1", port=8000)
+
+
+if __name__ == "__main__":
+    run()

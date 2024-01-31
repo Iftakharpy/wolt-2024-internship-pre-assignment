@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from .models import OrderInfo, DeliveryFee
+from app.delivery_fee.models import OrderInfo, DeliveryFee
 from math import ceil
 
 

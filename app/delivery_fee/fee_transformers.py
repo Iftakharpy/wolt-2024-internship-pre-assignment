@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from .models import OrderInfo, DeliveryFee
+from app.delivery_fee.models import OrderInfo, DeliveryFee
 from copy import deepcopy
 from pandas import Timestamp
 from datetime import time

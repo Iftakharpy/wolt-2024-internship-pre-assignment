@@ -1,7 +1,7 @@
-from .fee_calculation_steps import ALL_CALCULATION_STEPS, DeliveryFeeCalculationStep
-from .fee_transformers import ALL_FEE_TRANSFORMERS, DeliveryFeeTransformer
-from .models import OrderInfo, DeliveryFee
-from .utility_meta_classes import ThreadSafeSingletonMeta
+from app.delivery_fee.fee_calculation_steps import ALL_CALCULATION_STEPS, DeliveryFeeCalculationStep
+from app.delivery_fee.fee_transformers import ALL_FEE_TRANSFORMERS, DeliveryFeeTransformer
+from app.delivery_fee.models import OrderInfo, DeliveryFee
+from app.delivery_fee.utility_meta_classes import ThreadSafeSingletonMeta
 
 
 class DeliveryFeeCalculator(metaclass=ThreadSafeSingletonMeta):
