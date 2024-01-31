@@ -36,6 +36,14 @@ class ThreadSafeSingletonMeta(type):
                 cls._instances[cls] = instance
         return cls._instances[cls]
 
+    def clear_singleton_instance(cls):
+        """
+        This method is used for testing purposes only.
+        """
+        with cls._lock:
+            if cls in cls._instances:
+                cls._instances.pop(cls)
+
 
 class SingletonMeta(type):
     """
