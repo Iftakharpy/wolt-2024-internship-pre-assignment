@@ -20,7 +20,7 @@ from app.delivery_fee.fee_transformers import (
 
 # Settings for fee calculation steps.
 CART_VALUE_CONFIG_OPTIONS = CartValueFee.ConfigOptions(
-    cart_value_surcharge_threshold=10e2,  # 50€ (inclusive)
+    cart_value_surcharge_threshold=10e2,  # 10€ (inclusive)
 )
 DELIVERY_DISTANCE_CONFIG_OPTIONS = DeliveryDistanceFee.ConfigOptions(
     delivery_distance_low_threshold=1e3,  # 1km (inclusive)
@@ -29,10 +29,10 @@ DELIVERY_DISTANCE_CONFIG_OPTIONS = DeliveryDistanceFee.ConfigOptions(
     additional_fee_applied_per_meters_traveled=500,  # 500m (inclusive)
 )
 NUMBER_OF_ITEMS_CONFIG_OPTIONS = NumberOfItemsFee.ConfigOptions(
-    number_of_items_surcharge_threshold=10,  # 10 items (inclusive)
-    surcharge_per_item_over_threshold=5e2,  # 5€
-    bulk_charge=12,  # 12 items (inclusive)
-    bulk_charge_threshold=1.2e2,  # 1.20€
+    number_of_items_surcharge_threshold=4,  # 4 items (inclusive)
+    surcharge_per_item_over_threshold=50,  # 50 cents
+    bulk_charge=1.2e2,  # 1.20€
+    bulk_charge_threshold=12,  # 12 items (inclusive)
 )
 
 
@@ -54,7 +54,7 @@ FRIDAY_RUSH_HOUR_CONFIG_OPTIONS = FridayRushHourFeeTransformer.ConfigOptions(
     rush_hour_start=time(hour=12+3, minute=0),  # 3:00:00 PM (inclusive)
     rush_hour_end=time(hour=12+7, minute=59, second=59,
                        microsecond=999999),  # 7:59:59.999999 PM (inclusive)
-    rush_hour_fee_factor=1.2,  # 20% increase
+    rush_hour_fee_factor=1.2,  # 20% (increase)
 )
 LIMIT_FEE_CONFIG_OPTIONS = LimitFeeTransformer.ConfigOptions(
     highest_limit_of_delivery_fee=15e2,  # 15€ (exclusive)
@@ -68,7 +68,7 @@ EXCLUDE_FEE_CONFIG_OPTIONS = ExcludeFeeTransformer.ConfigOptions(
 
 # Here order of the transformers matters.
 ALL_FEE_TRANSFORMERS = [
-    FridayRushHourFeeTransformer(),
-    LimitFeeTransformer(),
-    ExcludeFeeTransformer()
+    FridayRushHourFeeTransformer(FRIDAY_RUSH_HOUR_CONFIG_OPTIONS),
+    LimitFeeTransformer(LIMIT_FEE_CONFIG_OPTIONS),
+    ExcludeFeeTransformer(EXCLUDE_FEE_CONFIG_OPTIONS)
 ]
