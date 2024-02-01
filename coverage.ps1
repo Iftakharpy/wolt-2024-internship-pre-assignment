@@ -5,13 +5,13 @@ param(
 # Responsible for cleaning coverage files
 function Clean {
 	# Pytest coverage files
-	Remove-Item -Path .\*.coverage -Force
+	Remove-Item -Recurse -Force -Path .\*.coverage, .pytest_cache
 	
 	# Coverage report files
-	Remove-Item -Path .\htmlcov -Recurse -Force
+	Remove-Item -Recurse -Force -Path .\htmlcov
 
 	# Remove pycache files
-	Get-ChildItem $Path -Recurse | Where{$_.Name -Match ".*pycache.*"} | Remove-Item -Force -Recurse
+	Get-ChildItem -Recurse $Path | Where{$_.Name -Match ".*pycache.*"} | Remove-Item -Force -Recurse
 }
 
 # Responsible for generating coverage report

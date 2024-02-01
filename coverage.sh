@@ -2,7 +2,12 @@
 
 # Responsible for cleaning up the coverage report
 function cleanup {
-	rm -rf .coverage ./htmlcov/
+	# Remove the pytest coverage file
+	rm -rf .coverage .pytest_cache/
+	# Remove the coverage report
+	rm -rf ./htmlcov/
+	# Remove the __pycache__ folder
+	rm -rf ./**/*pycache*/
 }
 
 # Responsible for generating the coverage report
