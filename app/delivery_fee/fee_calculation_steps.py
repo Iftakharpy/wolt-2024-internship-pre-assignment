@@ -95,9 +95,10 @@ class DeliveryDistanceFee(DeliveryFeeCalculationStep):
 
         # Apply additional fee for every 500m traveled.
         if order_info.delivery_distance > self.config_options.delivery_distance_low_threshold:
-            additional_fee_multiplier = ceil((
-                order_info.delivery_distance - self.config_options.delivery_distance_low_threshold
-            ) / self.config_options.additional_fee_applied_per_meters_traveled)
+            additional_distance_to_travel = order_info.delivery_distance - \
+                self.config_options.delivery_distance_low_threshold
+            additional_fee_multiplier = ceil(
+                additional_distance_to_travel / self.config_options.additional_fee_applied_per_meters_traveled)
 
             delivery_fee += (additional_fee_multiplier *
                              self.config_options.additional_fee)
@@ -148,10 +149,10 @@ class NumberOfItemsFee(DeliveryFeeCalculationStep):
 
         # Apply surcharge if number of items is more than the threshold.
         if order_info.number_of_items > self.config_options.number_of_items_surcharge_threshold:
-            surcharge = (
-                order_info.number_of_items - self.config_options.number_of_items_surcharge_threshold
-            ) * self.config_options.surcharge_per_item_over_threshold
+            items_over_threshold = order_info.number_of_items - \
+                self.config_options.number_of_items_surcharge_threshold
 
+            surcharge = items_over_threshold * self.config_options.surcharge_per_item_over_threshold
             delivery_fee += surcharge
 
         # Apply bulk charge for items.

@@ -69,6 +69,6 @@ EXCLUDE_FEE_CONFIG_OPTIONS = ReduceFeeTransformer.ConfigOptions(
 # Here order of the transformers matters.
 ALL_FEE_TRANSFORMERS = [
     RushHourFeeTransformer(FRIDAY_RUSH_HOUR_CONFIG_OPTIONS),
+    ReduceFeeTransformer(EXCLUDE_FEE_CONFIG_OPTIONS),
     LimitFeeTransformer(LIMIT_FEE_CONFIG_OPTIONS),
-    ReduceFeeTransformer(EXCLUDE_FEE_CONFIG_OPTIONS)
 ]
