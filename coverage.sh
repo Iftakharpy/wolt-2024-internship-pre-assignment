@@ -7,7 +7,7 @@ function cleanup {
 	# Remove the coverage report
 	rm -rf ./htmlcov/
 	# Remove the __pycache__ folder
-	rm -rf ./**/*pycache*/
+	find . | grep -E "pycache" | xargs rm -rf
 }
 
 # Responsible for generating the coverage report
