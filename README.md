@@ -1,10 +1,21 @@
 [![Run Pytest](https://github.com/Iftakharpy/wolt-2024-internship-pre-assignment/actions/workflows/run_pytest.yml/badge.svg)](https://github.com/Iftakharpy/wolt-2024-internship-pre-assignment/actions/workflows/run_pytest.yml)
 
+-   [WOLT 2024 internship pre-assignment](#wolt-2024-internship-pre-assignment)
+    -   [Working with the project](#working-with-the-project)
+        -   [Run project using `docker`](#run-project-using-docker)
+        -   [Run project directly with `Python 3`](#run-project-directly-with-python-3)
+        -   [Run tests](#run-tests)
+        -   [Get coverage report](#get-coverage-report)
+    -   [Project structure](#project-structure)
+        -   [Class relationships](#class-relationships)
+
 # WOLT 2024 internship pre-assignment
 
 This is my solution for [WOLT](https://wolt.com/en)'s [2024 internship](<https://careers.wolt.com/en/jobs/software-engineer-intern-(2024)/3823ba7>) [pre-assignment](https://github.com/woltapp/engineering-internship-2024)
 
-## Run project using docker
+## Working with the project
+
+### Run project using `docker`
 
 To run the project locally, it is recommended to use docker. So for that you will need docker installed on your machine. If you don't have docker installed, you can follow the instructions [here](https://docs.docker.com/get-docker/).
 
@@ -22,9 +33,9 @@ To stop the project, press `Ctrl + C` in the terminal and then run the following
 docker compose down
 ```
 
-## Run project without docker
+### Run project directly with `Python 3`
 
-To run this project without docker, you will have to have python 3 install. I recommend using `Python version 3.12.0` since this is the version I used during development. You can download python from [here](https://www.python.org/downloads/). When you have python installed, you will need to install the dependencies. To do so run the following command in the terminal:
+To run this project without docker, you will have to have Python 3 installed on your machine. I recommend using `Python version 3.12.0`, this is the version I used during development. You can download python from [here](https://www.python.org/downloads/). When you have python installed, you will need to install the dependencies. To do so run the following command in the terminal:
 
 ```bash
 pip install -r requirements.txt
@@ -36,14 +47,14 @@ pip install -r requirements.txt
 After installing the dependencies, you can run the project by running the following command in the terminal:
 
 ```bash
-uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
+uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
 
 Then open your browser and go to `http://localhost:8000/docs` to see the docs of the api endpoints.
 
 > Note: Of course, you will have to be in the project's base directory(ie. where `Dockerfile` and `README.md` file is located) to for this command to work.🙂
 
-## Run tests
+### Run tests
 
 To run the tests, open the terminal in the project base directory, this means the the directory where the `pytest.ini` is located. Then run the following command:
 
@@ -53,7 +64,7 @@ pytest -v
 
 > Note: You should have the project dependencies installed before running the tests.
 
-## To get coverage report
+### Get coverage report
 
 To get the coverage report, open the terminal in the project base directory, this means the the directory where the `pytest.ini` is located. Then run the `coverage.sh` or `coverage.ps1` depending on your operating system.
 
@@ -113,7 +124,7 @@ All the files related to the project are located in the `app` directory. The `ap
 -   `./app/delivery_fee/fee_transformers.py` has the fee transformers which are used to modify the fee. These does not calculate the fee, they modify the fee depending on the order info.
 -   `./app/delivery_fee/fee_calculator.py` has the fee calculator class which is used to first follow the delivery calculation steps and then applies the transformers to apply any rules on the calculated fee.
 
-## Class relationships
+### Class relationships
 
 -   `DeliveryFeeTransformer` and `DeliveryFeeCalculationStep` are interfaces. These are
     implemented by the other classes in the `fee_transformers.py` and `fee_calculation_steps.py` files respectively. Each of these classes has
