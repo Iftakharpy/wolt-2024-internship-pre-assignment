@@ -1,11 +1,17 @@
 param(
-	[bool]$clean = $false
+	[switch]$clean
 )
 
 # Responsible for cleaning coverage files
 function Clean {
-	Remove-Item -Path .\htmlcov -Recurse -Force
+	# Pytest coverage files
 	Remove-Item -Path .\*.coverage -Force
+	
+	# Coverage report files
+	Remove-Item -Path .\htmlcov -Recurse -Force
+
+	# Remove pycache files
+	Get-ChildItem $Path -Recurse | Where{$_.Name -Match ".*pycache.*"} | Remove-Item -Force -Recurse
 }
 
 # Responsible for generating coverage report
