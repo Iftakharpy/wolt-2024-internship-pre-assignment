@@ -323,7 +323,7 @@ def test_not_friday_rush_hour_fee_for_12h(client: TestClient):
         cart_value=5e2,
         delivery_distance=0,
         number_of_items=0,
-        time="2024-02-02T13:00:00Z"
+        time="2024-02-01T13:00:00Z"
     )
     json_request_data = json.loads(order_info.model_dump_json())
 
@@ -338,14 +338,14 @@ def test_not_friday_rush_hour_fee_for_15h(client: TestClient):
         cart_value=5e2,
         delivery_distance=0,
         number_of_items=0,
-        time="2024-02-02T15:00:00Z"
+        time="2024-02-01T15:00:00Z"
     )
     json_request_data = json.loads(order_info.model_dump_json())
 
     res = client.post("/api/delivery/calculate_delivery_fee/",
                       json=json_request_data)
     assert res.status_code == HTTPStatus.OK
-    assert res.json() == {"delivery_fee": 5e2*1.2}
+    assert res.json() == {"delivery_fee": 5e2}
 
 
 def test_not_friday_rush_hour_fee_for_end_of_19h(client: TestClient):
@@ -353,14 +353,14 @@ def test_not_friday_rush_hour_fee_for_end_of_19h(client: TestClient):
         cart_value=5e2,
         delivery_distance=0,
         number_of_items=0,
-        time="2024-02-02T19:59:59Z"
+        time="2024-02-01T19:59:59Z"
     )
     json_request_data = json.loads(order_info.model_dump_json())
 
     res = client.post("/api/delivery/calculate_delivery_fee/",
                       json=json_request_data)
     assert res.status_code == HTTPStatus.OK
-    assert res.json() == {"delivery_fee": 5e2*1.2}
+    assert res.json() == {"delivery_fee": 5e2}
 
 
 def test_not_friday_rush_hour_fee_after_19h(client: TestClient):
@@ -368,7 +368,7 @@ def test_not_friday_rush_hour_fee_after_19h(client: TestClient):
         cart_value=5e2,
         delivery_distance=0,
         number_of_items=0,
-        time="2024-02-02T20:00:00Z"
+        time="2024-02-01T20:00:00Z"
     )
     json_request_data = json.loads(order_info.model_dump_json())
 
