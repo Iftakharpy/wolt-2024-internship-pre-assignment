@@ -1,6 +1,13 @@
 [![Run Pytest](https://github.com/Iftakharpy/wolt-2024-internship-pre-assignment/actions/workflows/run_pytest.yml/badge.svg)](https://github.com/Iftakharpy/wolt-2024-internship-pre-assignment/actions/workflows/run_pytest.yml)
 
+# WOLT 2024 internship pre-assignment
+
+This is my solution for [WOLT](https://wolt.com/en)'s [2024 internship](<https://careers.wolt.com/en/jobs/software-engineer-intern-(2024)/3823ba7>) [pre-assignment](https://github.com/woltapp/engineering-internship-2024)
+
+## Table of contents
+
 -   [WOLT 2024 internship pre-assignment](#wolt-2024-internship-pre-assignment)
+    -   [Table of contents](#table-of-contents)
     -   [Working with the project](#working-with-the-project)
         -   [Run project using `docker`](#run-project-using-docker)
         -   [Run project directly with `Python 3`](#run-project-directly-with-python-3)
@@ -8,10 +15,6 @@
         -   [Get coverage report](#get-coverage-report)
     -   [Project structure](#project-structure)
         -   [Class relationships](#class-relationships)
-
-# WOLT 2024 internship pre-assignment
-
-This is my solution for [WOLT](https://wolt.com/en)'s [2024 internship](<https://careers.wolt.com/en/jobs/software-engineer-intern-(2024)/3823ba7>) [pre-assignment](https://github.com/woltapp/engineering-internship-2024)
 
 ## Working with the project
 
