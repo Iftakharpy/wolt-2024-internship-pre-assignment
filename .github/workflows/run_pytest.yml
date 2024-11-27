@@ -25,4 +25,4 @@ jobs:
               run: |
                   pytest  -vvvv
             - name: Coverage
-              run: coverage.sh
+              run: python -m coverage run -m pytest
