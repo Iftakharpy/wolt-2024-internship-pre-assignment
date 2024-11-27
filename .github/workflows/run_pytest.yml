@@ -24,5 +24,20 @@ jobs:
             - name: Test with pytest
               run: |
                   pytest  -vvvv
-            - name: Coverage
-              run: python -m coverage run -m pytest
+            - name: Generate coverage report
+              run: |
+                  python -m coverage run -m pytest
+                  python -m coverage html
+
+            - name: Setup GitHub Pages to publish coverage reports
+              uses: actions/configure-pages@v3
+            - name: debug
+              run: pwd
+            - name: Upload Artifact
+              uses: actions/upload-pages-artifact@v2
+              with:
+              # upload entire directory
+                  path: './htmlcov'
+            - name: Deploy to GitHub Pages
+              id: deployment
+              uses: actions/deploy-pages@v2
